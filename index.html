@@ -1,851 +1,185 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#09060e">
-  <meta name="description" content="LOCOPANI — Discover the next level of customization.">
-  <title>LOCOPANI — Beyond Ordinary</title>
-
-  <style>
-    :root {
-      --bg: #09060e;
-      --panel: rgba(22, 14, 32, .72);
-      --purple: #a855f7;
-      --purple-light: #d8b4fe;
-      --text: #f8f5ff;
-      --muted: #a59bb5;
-      --border: rgba(197, 150, 255, .15);
-      --glow: rgba(147, 51, 234, .22);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-        BlinkMacSystemFont, "Segoe UI", sans-serif;
-      overflow-x: hidden;
-      line-height: 1.6;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -2;
-      background:
-        radial-gradient(ellipse at 15% 10%, rgba(126, 34, 206, .15), transparent 38%),
-        radial-gradient(ellipse at 85% 35%, rgba(88, 28, 135, .12), transparent 34%),
-        radial-gradient(ellipse at 50% 90%, rgba(107, 33, 168, .10), transparent 40%);
-    }
-
-    a { color: inherit; text-decoration: none; }
-    button, a { -webkit-tap-highlight-color: transparent; }
-
-    .noise {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      opacity: .12;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
-    }
-
-    .container { width: min(1120px, calc(100% - 40px)); margin: auto; }
-
-    .navbar {
-      position: fixed;
-      z-index: 20;
-      top: 0;
-      left: 0;
-      width: 100%;
-      border-bottom: 1px solid transparent;
-      transition: background .3s, border-color .3s;
-    }
-
-    .navbar.scrolled {
-      background: rgba(9, 6, 14, .82);
-      border-color: var(--border);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-    }
-
-    .nav-inner {
-      height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 11px;
-      font-weight: 850;
-      letter-spacing: 2px;
-      font-size: 17px;
-    }
-
-    .brand-mark {
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(216, 180, 254, .55);
-      border-radius: 11px;
-      color: white;
-      background: linear-gradient(145deg, #9b4de8, #44156d);
-      box-shadow: 0 0 24px rgba(168, 85, 247, .25);
-      font-weight: 900;
-    }
-
-    .nav-links { display: flex; align-items: center; gap: 30px; }
-
-    .nav-links a:not(.nav-cta) {
-      font-size: 13px;
-      color: var(--muted);
-      transition: color .2s;
-    }
-
-    .nav-links a:hover { color: white; }
-
-    .nav-cta, .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: 1px solid rgba(216, 180, 254, .35);
-      border-radius: 12px;
-      background: linear-gradient(135deg, #a855f7, #7132b5);
-      color: white;
-      font-size: 13px;
-      font-weight: 750;
-      padding: 13px 19px;
-      box-shadow: 0 0 28px rgba(147, 51, 234, .17);
-      transition: transform .25s, box-shadow .25s, border-color .25s;
-      cursor: pointer;
-    }
-
-    .nav-cta { padding: 10px 15px; }
-    .button:hover, .nav-cta:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 38px rgba(168, 85, 247, .32);
-      border-color: rgba(233, 213, 255, .8);
-    }
-
-    .button.secondary {
-      background: rgba(255, 255, 255, .035);
-      border-color: var(--border);
-      box-shadow: none;
-    }
-
-    .menu-toggle {
-      display: none;
-      border: 1px solid var(--border);
-      color: white;
-      background: var(--panel);
-      border-radius: 10px;
-      width: 42px;
-      height: 42px;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .hero {
-      min-height: 780px;
-      padding: 160px 0 100px;
-      display: flex;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.05fr .95fr;
-      align-items: center;
-      gap: 48px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      color: #d8b4fe;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 7px 12px;
-      font-size: 11px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      background: rgba(147, 51, 234, .07);
-    }
-
-    .live-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #c084fc;
-      box-shadow: 0 0 12px #a855f7;
-      animation: pulse 2s infinite;
-    }
-
-    h1 {
-      font-size: clamp(49px, 6.7vw, 84px);
-      line-height: .99;
-      letter-spacing: -5px;
-      font-weight: 900;
-      margin: 28px 0 24px;
-    }
-
-    .gradient-text {
-      background: linear-gradient(100deg, #fff 4%, #d8b4fe 38%, #a855f7 72%, #7c3aed);
-      background-size: 200% auto;
-      color: transparent;
-      background-clip: text;
-      -webkit-background-clip: text;
-      animation: gradient 7s linear infinite;
-    }
-
-    .hero-copy {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.9;
-      max-width: 490px;
-    }
-
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
-
-    .hero-note {
-      color: #786c88;
-      font-size: 11px;
-      margin-top: 20px;
-    }
-
-    .visual-stage {
-      min-height: 400px;
-      position: relative;
-      display: grid;
-      place-items: center;
-      isolation: isolate;
-    }
-
-    .orb {
-      position: absolute;
-      z-index: -1;
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
-      background: #8b36d9;
-      filter: blur(100px);
-      opacity: .26;
-      animation: breathe 6s ease-in-out infinite alternate;
-    }
-
-    .orbit {
-      position: absolute;
-      width: 350px;
-      height: 350px;
-      border: 1px solid rgba(192, 132, 252, .18);
-      border-radius: 50%;
-      transform: rotateX(65deg) rotate(-25deg);
-      animation: rotate 28s linear infinite;
-    }
-
-    .orbit::before, .orbit::after {
-      content: "";
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #d8b4fe;
-      box-shadow: 0 0 20px #a855f7;
-    }
-
-    .orbit::before { top: 40px; left: 54px; }
-    .orbit::after { right: 25px; bottom: 70px; }
-
-    .core-card {
-      width: min(100%, 350px);
-      padding: 27px;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(216, 180, 254, .24);
-      border-radius: 23px;
-      background: linear-gradient(145deg, rgba(38, 22, 54, .88), rgba(14, 9, 21, .92));
-      box-shadow: 0 24px 90px rgba(0, 0, 0, .42), 0 0 55px rgba(147, 51, 234, .12);
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .core-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 15%;
-      right: 15%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #d8b4fe, transparent);
-    }
-
-    .card-top { display: flex; justify-content: space-between; align-items: center; }
-    .card-label { color: #a99ab9; font-size: 10px; letter-spacing: 2px; }
-    .status { font-size: 10px; color: #d8b4fe; }
-    .status::before { content: "●"; font-size: 8px; margin-right: 6px; color: #c084fc; }
-
-    .core-logo {
-      height: 150px;
-      display: grid;
-      place-items: center;
-      position: relative;
-    }
-
-    .core-logo span {
-      font-size: 83px;
-      font-weight: 950;
-      letter-spacing: -9px;
-      padding-right: 9px;
-      color: white;
-      text-shadow: 0 0 45px rgba(168, 85, 247, .65);
-    }
-
-    .core-logo::after {
-      content: "";
-      position: absolute;
-      width: 145px;
-      height: 65px;
-      background: rgba(147, 51, 234, .25);
-      filter: blur(40px);
-      z-index: -1;
-    }
-
-    .card-divider { height: 1px; background: var(--border); margin: 6px 0 18px; }
-    .card-bottom { display: flex; justify-content: space-between; align-items: center; }
-    .card-bottom strong { display: block; font-size: 12px; }
-    .card-bottom small { display: block; font-size: 10px; color: var(--muted); margin-top: 3px; }
-    .mini-icon { font-size: 20px; color: #d8b4fe; }
-
-    .scroll-hint {
-      position: absolute;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #71647f;
-      font-size: 10px;
-      letter-spacing: 2px;
-    }
-
-    section { padding: 100px 0; position: relative; }
-
-    .section-head { max-width: 620px; margin-bottom: 42px; }
-    .section-tag { color: #c084fc; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; }
-    h2 { font-size: clamp(30px, 4vw, 47px); letter-spacing: -1.7px; line-height: 1.15; margin: 14px 0; }
-    .section-desc { color: var(--muted); font-size: 14px; line-height: 1.9; }
-
-    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-
-    .feature {
-      position: relative;
-      overflow: hidden;
-      padding: 27px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: linear-gradient(145deg, rgba(29, 19, 40, .78), rgba(14, 10, 20, .72));
-      transition: transform .3s, border-color .3s, background .3s;
-    }
-
-    .feature::after {
-      content: "";
-      position: absolute;
-      width: 110px;
-      height: 110px;
-      top: -70px;
-      right: -50px;
-      border-radius: 50%;
-      background: #9333ea;
-      filter: blur(60px);
-      opacity: 0;
-      transition: opacity .3s;
-      pointer-events: none;
-    }
-
-    .feature:hover {
-      transform: translateY(-6px);
-      border-color: rgba(192, 132, 252, .45);
-      background: linear-gradient(145deg, rgba(42, 24, 59, .85), rgba(17, 11, 25, .8));
-    }
-
-    .feature:hover::after { opacity: .5; }
-
-    .feature-icon {
-      width: 45px;
-      height: 45px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(192, 132, 252, .2);
-      border-radius: 13px;
-      background: rgba(147, 51, 234, .12);
-      color: #d8b4fe;
-      font-size: 21px;
-      margin-bottom: 24px;
-    }
-
-    .feature h3 { font-size: 16px; margin-bottom: 10px; }
-    .feature p { font-size: 12px; color: var(--muted); line-height: 1.9; }
-
-    .showcase {
-      display: grid;
-      grid-template-columns: .9fr 1.1fr;
-      gap: 65px;
-      align-items: center;
-    }
-
-    .showcase-panel {
-      min-height: 330px;
-      border: 1px solid var(--border);
-      border-radius: 23px;
-      padding: 25px;
-      background:
-        radial-gradient(ellipse at 50% 0%, rgba(147, 51, 234, .18), transparent 60%),
-        rgba(17, 11, 25, .8);
-      box-shadow: inset 0 1px rgba(255,255,255,.025);
-    }
-
-    .panel-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 27px; }
-    .panel-bar i { width: 7px; height: 7px; border-radius: 50%; background: #76558b; }
-    .panel-title { margin-left: auto; color: #8f809e; font-size: 10px; }
-    .setting-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 15px 0;
-      border-bottom: 1px solid rgba(197, 150, 255, .09);
-      font-size: 12px;
-      gap: 12px;
-    }
-
-    .setting-row:last-child { border-bottom: 0; }
-    .setting-label { color: #e7ddf0; }
-    .setting-sub { color: #82758f; font-size: 10px; margin-top: 3px; }
-    .toggle {
-      width: 31px;
-      height: 17px;
-      border-radius: 20px;
-      background: #8b3bd1;
-      position: relative;
-      flex-shrink: 0;
-      box-shadow: 0 0 12px rgba(168, 85, 247, .2);
-    }
-    .toggle::after {
-      content: "";
-      position: absolute;
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      background: white;
-      right: 3px;
-      top: 3px;
-    }
-
-    .updates-card {
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 27px;
-      background: rgba(22, 14, 32, .65);
-    }
-
-    .update-top { display: flex; justify-content: space-between; gap: 15px; align-items: center; flex-wrap: wrap; }
-    .version {
-      display: inline-block;
-      padding: 5px 9px;
-      color: #d8b4fe;
-      border: 1px solid rgba(192, 132, 252, .23);
-      border-radius: 7px;
-      font-size: 10px;
-    }
-
-    .update-label { font-size: 10px; color: #8e809d; }
-    .updates-card h3 { margin: 20px 0 9px; font-size: 17px; }
-    .updates-card p { color: var(--muted); font-size: 12px; line-height: 1.9; }
-    .update-foot { color: #776b84; font-size: 10px; margin-top: 20px; }
-
-    .cta-box {
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      padding: 65px 30px;
-      border: 1px solid rgba(192, 132, 252, .23);
-      border-radius: 25px;
-      background:
-        radial-gradient(ellipse at 50% 110%, rgba(126, 34, 206, .25), transparent 60%),
-        linear-gradient(135deg, rgba(33, 19, 47, .75), rgba(15, 9, 23, .85));
-    }
-
-    .cta-box h2 { max-width: 600px; margin: 15px auto; }
-    .cta-box p { max-width: 490px; margin: 0 auto 25px; color: var(--muted); font-size: 13px; }
-    .cta-box .button { position: relative; z-index: 1; }
-
-    footer { padding: 28px 0; border-top: 1px solid var(--border); }
-    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .footer-copy { color: #796e85; font-size: 10px; }
-    .footer-links { display: flex; gap: 20px; color: #9d90ac; font-size: 11px; }
-    .footer-links a:hover { color: white; }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity .65s ease, transform .65s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    @keyframes pulse { 50% { opacity: .45; box-shadow: 0 0 4px #a855f7; } }
-    @keyframes gradient { to { background-position: 200% center; } }
-    @keyframes breathe { to { transform: scale(1.2); opacity: .4; } }
-    @keyframes rotate { to { transform: rotateX(65deg) rotate(335deg); } }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-        transition-duration: .01ms !important;
-      }
-      .reveal { opacity: 1; transform: none; }
-    }
-
-    @media (max-width: 800px) {
-      .hero { min-height: auto; padding: 135px 0 90px; }
-      .hero-grid { grid-template-columns: 1fr; gap: 30px; }
-      .hero-copy { max-width: 570px; }
-      .visual-stage { min-height: 360px; }
-      .features-grid { grid-template-columns: repeat(2, 1fr); }
-      .showcase { grid-template-columns: 1fr; gap: 35px; }
-      .showcase-panel { order: 2; }
-      .scroll-hint { display: none; }
-    }
-
-    @media (max-width: 560px) {
-      .container { width: min(100% - 32px, 1120px); }
-      .nav-inner { height: 68px; }
-      .menu-toggle { display: block; }
-      .nav-links {
-        display: none;
-        position: absolute;
-        top: 75px;
-        left: 16px;
-        right: 16px;
-        padding: 18px;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 18px;
-        background: rgba(14, 8, 21, .97);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        backdrop-filter: blur(15px);
-      }
-      .nav-links.open { display: flex; }
-      .nav-links a:not(.nav-cta) { padding: 4px; }
-      .nav-cta { text-align: center; }
-      h1 { font-size: clamp(48px, 14vw, 68px); letter-spacing: -3px; }
-      section { padding: 75px 0; }
-      .features-grid { grid-template-columns: 1fr; }
-      .feature { padding: 23px; }
-      .visual-stage { min-height: 320px; }
-      .orbit { width: 290px; height: 290px; }
-      .core-card { padding: 23px; max-width: 320px; }
-      .core-logo { height: 125px; }
-      .core-logo span { font-size: 72px; }
-      .cta-box { padding: 48px 20px; }
-      .footer-inner { flex-direction: column; align-items: flex-start; }
-      .footer-links { flex-wrap: wrap; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#09060e">
+<meta name="description" content="LOCOPANI — Beyond Ordinary.">
+<title>LOCOPANI — Beyond Ordinary</title>
+<style>
+:root{--bg:#09060e;--panel:rgba(22,14,32,.78);--purple:#a855f7;--light:#d8b4fe;--text:#f8f5ff;--muted:#a59bb5;--border:rgba(197,150,255,.17)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden;line-height:1.6}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;background:radial-gradient(ellipse at 15% 10%,rgba(126,34,206,.18),transparent 38%),radial-gradient(ellipse at 85% 35%,rgba(88,28,135,.14),transparent 34%),radial-gradient(ellipse at 50% 90%,rgba(107,33,168,.12),transparent 40%)}
+#particles{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:90;display:block;}
+#cursor-glow{position:fixed;inset:0;z-index:91;pointer-events:none;opacity:0;transition:opacity .25s ease;background:radial-gradient(360px circle at var(--cursor-x,50vw) var(--cursor-y,50vh),rgba(168,85,247,.18),rgba(126,34,206,.075) 35%,transparent 70%);mix-blend-mode:screen}
+@media(hover:hover) and (pointer:fine){#cursor-glow{opacity:1}}
+@media(prefers-reduced-motion:reduce){#cursor-glow{display:none}}
+a{color:inherit;text-decoration:none}
+button,a{-webkit-tap-highlight-color:transparent}
+.noise{position:fixed;inset:0;z-index:89;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E")}
+.container{width:min(1120px,calc(100% - 40px));margin:auto;position:relative;z-index:1}
+.navbar{position:fixed;z-index:20;top:0;left:0;width:100%;border-bottom:1px solid transparent;transition:background .3s,border-color .3s}
+.navbar.scrolled{background:rgba(9,6,14,.84);border-color:var(--border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.nav-inner{height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:11px;font-weight:850;letter-spacing:2px;font-size:17px}
+.brand-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(216,180,254,.55);border-radius:11px;background:linear-gradient(145deg,#9b4de8,#44156d);box-shadow:0 0 24px rgba(168,85,247,.25);font-weight:900}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a:not(.nav-cta){font-size:13px;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:white}
+.nav-cta,.button{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid rgba(216,180,254,.38);border-radius:12px;background:linear-gradient(135deg,#a855f7,#7132b5);color:white;font-size:13px;font-weight:800;padding:13px 19px;box-shadow:0 0 28px rgba(147,51,234,.17);transition:transform .25s,box-shadow .25s,border-color .25s;cursor:pointer}
+.nav-cta{padding:10px 15px}
+.button:hover,.nav-cta:hover{transform:translateY(-3px);box-shadow:0 8px 38px rgba(168,85,247,.32);border-color:rgba(233,213,255,.8)}
+.button.secondary{background:rgba(255,255,255,.035);border-color:var(--border);box-shadow:none}
+.menu-toggle{display:none;border:1px solid var(--border);color:white;background:var(--panel);border-radius:10px;width:42px;height:42px;font-size:20px;cursor:pointer}
+.hero{min-height:760px;padding:155px 0 100px;display:flex;align-items:center;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;color:#d8b4fe;border:1px solid var(--border);border-radius:999px;padding:7px 12px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;background:rgba(147,51,234,.07)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#c084fc;box-shadow:0 0 12px #a855f7;animation:pulse 2s infinite}
+h1{font-size:clamp(49px,6.7vw,84px);line-height:.99;letter-spacing:-5px;font-weight:900;margin:28px 0 24px}
+.gradient-text{background:linear-gradient(100deg,#fff 4%,#d8b4fe 38%,#a855f7 72%,#7c3aed);background-size:200% auto;color:transparent;background-clip:text;-webkit-background-clip:text;animation:gradient 7s linear infinite}
+.hero-copy{color:var(--muted);font-size:15px;line-height:1.9;max-width:490px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hero-note{color:#786c88;font-size:11px;margin-top:20px}
+.visual-stage{min-height:400px;position:relative;display:grid;place-items:center;isolation:isolate}
+.orb{position:absolute;z-index:-1;width:300px;height:300px;border-radius:50%;background:#8b36d9;filter:blur(100px);opacity:.26;animation:breathe 6s ease-in-out infinite alternate}
+.orbit{position:absolute;width:350px;height:350px;border:1px solid rgba(192,132,252,.18);border-radius:50%;transform:rotateX(65deg) rotate(-25deg);animation:rotate 28s linear infinite}
+.orbit::before,.orbit::after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:#d8b4fe;box-shadow:0 0 20px #a855f7}
+.orbit::before{top:40px;left:54px}.orbit::after{right:25px;bottom:70px}
+.core-card{width:min(100%,350px);padding:27px;position:relative;overflow:hidden;border:1px solid rgba(216,180,254,.24);border-radius:23px;background:linear-gradient(145deg,rgba(38,22,54,.88),rgba(14,9,21,.92));box-shadow:0 24px 90px #0006,0 0 55px rgba(147,51,234,.12);animation:float 6s ease-in-out infinite}
+.core-card::before{content:"";position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,#d8b4fe,transparent)}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.card-label{color:#a99ab9;font-size:10px;letter-spacing:2px}.status{font-size:10px;color:#d8b4fe}.status::before{content:"●";font-size:8px;margin-right:6px;color:#c084fc}
+.core-logo{height:150px;display:grid;place-items:center;position:relative}.core-logo span{font-size:83px;font-weight:950;letter-spacing:-9px;padding-right:9px;color:white;text-shadow:0 0 45px rgba(168,85,247,.65)}
+.core-logo::after{content:"";position:absolute;width:145px;height:65px;background:rgba(147,51,234,.25);filter:blur(40px);z-index:-1}
+.card-divider{height:1px;background:var(--border);margin:6px 0 18px}.card-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px}.card-bottom strong{display:block;font-size:12px}.card-bottom small{display:block;font-size:10px;color:var(--muted);margin-top:3px}.mini-icon{font-size:20px;color:#d8b4fe}
+section{padding:100px 0;position:relative;z-index:1}
+.section-head{max-width:650px;margin-bottom:42px}.section-tag{color:#c084fc;font-size:11px;letter-spacing:2.5px;text-transform:uppercase}
+h2{font-size:clamp(30px,4vw,47px);letter-spacing:-1.7px;line-height:1.15;margin:14px 0}
+.section-desc{color:var(--muted);font-size:14px;line-height:1.9}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feature{position:relative;overflow:hidden;padding:27px;border:1px solid var(--border);border-radius:18px;background:linear-gradient(145deg,rgba(29,19,40,.78),rgba(14,10,20,.72));transition:transform .3s,border-color .3s,background .3s}
+.feature::after{content:"";position:absolute;width:110px;height:110px;top:-70px;right:-50px;border-radius:50%;background:#9333ea;filter:blur(60px);opacity:0;transition:opacity .3s;pointer-events:none}
+.feature:hover{transform:translateY(-6px);border-color:rgba(192,132,252,.55);background:linear-gradient(145deg,rgba(42,24,59,.85),rgba(17,11,25,.8))}
+.feature:hover::after{opacity:.5}
+.feature-icon{width:45px;height:45px;display:grid;place-items:center;border:1px solid rgba(192,132,252,.2);border-radius:13px;background:rgba(147,51,234,.12);color:#d8b4fe;font-size:21px;margin-bottom:24px}
+.feature h3{font-size:16px;margin-bottom:10px}.feature p{font-size:12px;color:var(--muted);line-height:1.9}
+.showcase{display:grid;grid-template-columns:.9fr 1.1fr;gap:65px;align-items:center}
+.showcase-panel{min-height:330px;border:1px solid var(--border);border-radius:23px;padding:25px;background:radial-gradient(ellipse at 50% 0%,rgba(147,51,234,.18),transparent 60%),rgba(17,11,25,.8);box-shadow:inset 0 1px rgba(255,255,255,.025)}
+.panel-bar{display:flex;align-items:center;gap:6px;margin-bottom:27px}.panel-bar i{width:7px;height:7px;border-radius:50%;background:#76558b}.panel-title{margin-left:auto;color:#8f809e;font-size:10px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid rgba(197,150,255,.09);font-size:12px;gap:12px}.setting-row:last-child{border-bottom:0}.setting-label{color:#e7ddf0}.setting-sub{color:#82758f;font-size:10px;margin-top:3px}
+.toggle{width:31px;height:17px;border-radius:20px;background:#8b3bd1;position:relative;flex-shrink:0;box-shadow:0 0 12px rgba(168,85,247,.2)}.toggle::after{content:"";position:absolute;width:11px;height:11px;border-radius:50%;background:white;right:3px;top:3px}
+.updates-card{border:1px solid var(--border);border-radius:18px;padding:27px;background:rgba(22,14,32,.65)}
+.update-top{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}.version{display:inline-block;padding:5px 9px;color:#d8b4fe;border:1px solid rgba(192,132,252,.23);border-radius:7px;font-size:10px}.update-label{font-size:10px;color:#8e809d}
+.updates-card h3{margin:20px 0 9px;font-size:17px}.updates-card p{color:var(--muted);font-size:12px;line-height:1.9}.update-foot{color:#776b84;font-size:10px;margin-top:20px}
+.pricing-section{padding-top:80px}
+.plans{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;align-items:stretch}
+.plan{--mx:50%;--my:50%;position:relative;isolation:isolate;overflow:hidden;min-height:440px;padding:24px 19px;border:1px solid rgba(192,132,252,.28);border-radius:21px;background:linear-gradient(160deg,rgba(34,21,48,.92),rgba(13,9,19,.98));display:flex;flex-direction:column;transition:transform .28s,border-color .28s,box-shadow .28s;box-shadow:0 10px 36px #0003}
+.plan::before{content:"";position:absolute;z-index:-1;inset:-1px;background:radial-gradient(250px circle at var(--mx) var(--my),rgba(192,132,252,.27),transparent 62%);opacity:0;transition:opacity .25s}
+.plan::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(145deg,rgba(233,213,255,.75),transparent 35%,rgba(168,85,247,.55));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.28;pointer-events:none}
+.plan:hover{transform:translateY(-8px);border-color:rgba(216,180,254,.85);box-shadow:0 18px 44px rgba(126,34,206,.2),0 0 30px rgba(168,85,247,.14)}.plan:hover::before{opacity:1}
+.plan-icon{font-size:1.9rem;color:#d8b4fe}.plan h3{margin:18px 0 4px;font-size:1.05rem;letter-spacing:.05em}.price{font-size:clamp(1.3rem,2vw,1.75rem);font-weight:900;letter-spacing:-.04em;margin:8px 0}.duration{font-size:.83rem;color:#d8b4fe}.plan p{font-size:.85rem;color:var(--muted);margin:24px 0}.plan .button{margin-top:auto;font-size:.86rem;padding:12px 10px}
+.plan.featured{border-color:rgba(192,132,252,.68);box-shadow:0 0 32px rgba(147,51,234,.12)}
+.cta-box{text-align:center;position:relative;overflow:hidden;padding:65px 30px;border:1px solid rgba(192,132,252,.23);border-radius:25px;background:radial-gradient(ellipse at 50% 110%,rgba(126,34,206,.25),transparent 60%),linear-gradient(135deg,rgba(33,19,47,.75),rgba(15,9,23,.85))}
+.cta-box h2{max-width:600px;margin:15px auto}.cta-box p{max-width:490px;margin:0 auto 25px;color:var(--muted);font-size:13px}
+footer{padding:28px 0;border-top:1px solid var(--border);position:relative;z-index:1}.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:20px}.footer-copy{color:#796e85;font-size:10px}.footer-links{display:flex;gap:20px;color:#9d90ac;font-size:11px}.footer-links a:hover{color:white}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease,filter .65s ease;filter:blur(4px)}.reveal.visible{opacity:1;transform:translateY(0);filter:blur(0)}
+@keyframes pulse{50%{opacity:.45;box-shadow:0 0 4px #a855f7}}@keyframes gradient{to{background-position:200% center}}@keyframes breathe{to{transform:scale(1.2);opacity:.4}}@keyframes rotate{to{transform:rotateX(65deg) rotate(335deg)}}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes pageIn{from{opacity:0;transform:translateY(12px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+body{animation:pageIn .65s ease-out both}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none;filter:none}}
+@media(max-width:900px){.hero{min-height:auto;padding:135px 0 90px}.hero-grid{grid-template-columns:1fr;gap:30px}.hero-copy{max-width:570px}.visual-stage{min-height:360px}.features-grid{grid-template-columns:repeat(2,1fr)}.showcase{grid-template-columns:1fr;gap:35px}.showcase-panel{order:2}.plans{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.container{width:min(100% - 32px,1120px)}.nav-inner{height:68px}.menu-toggle{display:block}.nav-links{display:none;position:absolute;top:75px;left:16px;right:16px;padding:18px;flex-direction:column;align-items:stretch;gap:18px;background:rgba(14,8,21,.97);border:1px solid var(--border);border-radius:16px;backdrop-filter:blur(15px)}.nav-links.open{display:flex}.nav-links a:not(.nav-cta){padding:4px}.nav-cta{text-align:center}h1{font-size:clamp(48px,14vw,68px);letter-spacing:-3px}section{padding:75px 0}.features-grid,.plans{grid-template-columns:1fr}.feature{padding:23px}.visual-stage{min-height:320px}.orbit{width:290px;height:290px}.core-card{padding:23px;max-width:320px}.core-logo{height:125px}.core-logo span{font-size:72px}.cta-box{padding:48px 20px}.footer-inner{flex-direction:column;align-items:flex-start}.footer-links{flex-wrap:wrap}.plan{min-height:370px}}
+</style>
 </head>
-
 <body>
-  <div class="noise" aria-hidden="true"></div>
-
-  <header class="navbar" id="navbar">
-    <div class="container nav-inner">
-      <a class="brand" href="#home" aria-label="LOCOPANI home">
-        <span class="brand-mark">L</span>
-        <span>LOCOPANI</span>
-      </a>
-
-      <button class="menu-toggle" id="menuToggle"
-        aria-label="Open navigation" aria-expanded="false">☰</button>
-
-      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
-        <a href="#home">Home</a>
-        <a href="#features">Features</a>
-        <a href="#showcase">Experience</a>
-        <a href="#updates">Updates</a>
-        <a class="nav-cta"
-          href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">
-          Get Key <span aria-hidden="true">↗</span>
-        </a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero" id="home">
-      <div class="container hero-grid">
-        <div class="reveal">
-          <div class="eyebrow"><span class="live-dot"></span> THE LOCOPANI EXPERIENCE</div>
-          <h1>GO BEYOND<br><span class="gradient-text">ORDINARY.</span></h1>
-          <p class="hero-copy">
-            Discover a new level of customization. Explore the LOCOPANI
-            experience, personalize your setup, and make it your own.
-          </p>
-          <div class="hero-actions">
-            <a class="button"
-              href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">
-              GET STARTED <span aria-hidden="true">↗</span>
-            </a>
-            <a class="button secondary" href="#features">
-              EXPLORE FEATURES <span aria-hidden="true">↓</span>
-            </a>
-          </div>
-          <p class="hero-note">BUILT FOR PERSONALIZATION. DESIGNED TO STAND OUT.</p>
-        </div>
-
-        <div class="visual-stage reveal" aria-label="LOCOPANI visual showcase">
-          <div class="orb"></div>
-          <div class="orbit"></div>
-          <div class="core-card">
-            <div class="card-top">
-              <span class="card-label">LOCOPANI / EXPERIENCE</span>
-              <span class="status">PURPLE EDITION</span>
-            </div>
-            <div class="core-logo"><span>LO.</span></div>
-            <div class="card-divider"></div>
-            <div class="card-bottom">
-              <div>
-                <strong>YOUR STYLE. YOUR SETUP.</strong>
-                <small>A different kind of experience.</small>
-              </div>
-              <span class="mini-icon" aria-hidden="true">✳</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="scroll-hint">SCROLL TO EXPLORE ↓</div>
-    </section>
-
-    <section id="features">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="section-tag">01 / What to expect</span>
-          <h2>Built around <span class="gradient-text">your style.</span></h2>
-          <p class="section-desc">
-            Explore the ideas behind LOCOPANI: personalization, visual
-            details, and tools designed to give you more control over your experience.
-          </p>
-        </div>
-
-        <div class="features-grid">
-          <article class="feature reveal">
-            <div class="feature-icon" aria-hidden="true">✳</div>
-            <h3>Visual Customization</h3>
-            <p>Explore visual options and personalize the look of your experience.</p>
-          </article>
-          <article class="feature reveal">
-            <div class="feature-icon" aria-hidden="true">◈</div>
-            <h3>Interface & Controls</h3>
-            <p>A customizable interface built around accessible options and organized controls.</p>
-          </article>
-          <article class="feature reveal">
-            <div class="feature-icon" aria-hidden="true">✧</div>
-            <h3>Personal Touch</h3>
-            <p>Make the experience feel more like your own with supported customization options.</p>
-          </article>
-          <article class="feature reveal">
-            <div class="feature-icon" aria-hidden="true">⌘</div>
-            <h3>Configuration</h3>
-            <p>Keep your preferred setup organized with available configuration features.</p>
-          </article>
-          <article class="feature reveal">
-            <div class="feature-icon" aria-hidden="true">↗</div>
-            <h3>Regular Improvements</h3>
-            <p>Follow project news and discover new changes as the project evolves.</p>
-          </article>
-          <article class="feature reveal">
-            <div class="feature-icon" aria-hidden="true">◇</div>
-            <h3>LOCOPANI Identity</h3>
-            <p>A distinct visual direction with a dark atmosphere and a signature purple glow.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="showcase">
-      <div class="container showcase">
-        <div class="showcase-panel reveal" aria-label="Illustrative interface preview">
-          <div class="panel-bar">
-            <i></i><i></i><i></i>
-            <span class="panel-title">LOCOPANI / PREVIEW</span>
-          </div>
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">Visual options</div>
-              <div class="setting-sub">Personalize your experience</div>
-            </div>
-            <span class="toggle" aria-hidden="true"></span>
-          </div>
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">Interface settings</div>
-              <div class="setting-sub">Make it feel like yours</div>
-            </div>
-            <span class="toggle" aria-hidden="true"></span>
-          </div>
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">Custom appearance</div>
-              <div class="setting-sub">Your style, your choice</div>
-            </div>
-            <span class="toggle" aria-hidden="true"></span>
-          </div>
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">Purple atmosphere</div>
-              <div class="setting-sub">The LOCOPANI aesthetic</div>
-            </div>
-            <span class="toggle" aria-hidden="true"></span>
-          </div>
-        </div>
-
-        <div class="reveal">
-          <span class="section-tag">02 / The experience</span>
-          <h2>More than a name.<br><span class="gradient-text">A signature.</span></h2>
-          <p class="section-desc">
-            LOCOPANI brings its own visual identity to every detail.
-            This preview illustrates the site's design direction; it is
-            not a live control panel for the script.
-          </p>
-          <div style="margin-top:25px">
-            <a class="button secondary" href="#updates">DISCOVER THE PROJECT ↗</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="updates">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="section-tag">03 / Project news</span>
-          <h2>Always <span class="gradient-text">evolving.</span></h2>
-          <p class="section-desc">
-            Visit this section for project announcements and future release notes.
-          </p>
-        </div>
-
-        <article class="updates-card reveal">
-          <div class="update-top">
-            <span class="version">PROJECT NEWS</span>
-            <span class="update-label">LOCOPANI / OFFICIAL</span>
-          </div>
-          <h3>A new home for LOCOPANI.</h3>
-          <p>
-            This website is the new central place for project information,
-            feature highlights, and future announcements. Release notes
-            will be added here as they are confirmed.
-          </p>
-          <div class="update-foot">WELCOME TO THE LOCOPANI WEBSITE.</div>
-        </article>
-      </div>
-    </section>
-
-    <section id="get-key">
-      <div class="container">
-        <div class="cta-box reveal">
-          <span class="section-tag">READY TO GET STARTED?</span>
-          <h2>Your next step starts <span class="gradient-text">here.</span></h2>
-          <p>
-            Continue to the existing LOCOPANI key system to access
-            the current key flow.
-          </p>
-          <a class="button"
-            href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">
-            GET YOUR KEY <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer-inner">
-      <a class="brand" href="#home">
-        <span class="brand-mark">L</span>
-        <span>LOCOPANI</span>
-      </a>
-      <p class="footer-copy">© <span id="year"></span> LOCOPANI. All rights reserved.</p>
-      <div class="footer-links">
-        <a href="#home">Home</a>
-        <a href="#features">Features</a>
-        <a href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">Get Key</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    (() => {
-      const navbar = document.getElementById("navbar");
-      const menuToggle = document.getElementById("menuToggle");
-      const navLinks = document.getElementById("navLinks");
-      const year = document.getElementById("year");
-
-      year.textContent = new Date().getFullYear();
-
-      const updateNavbar = () => {
-        navbar.classList.toggle("scrolled", window.scrollY > 20);
-      };
-
-      updateNavbar();
-      window.addEventListener("scroll", updateNavbar, { passive: true });
-
-      menuToggle.addEventListener("click", () => {
-        const isOpen = navLinks.classList.toggle("open");
-        menuToggle.setAttribute("aria-expanded", String(isOpen));
-        menuToggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
-        menuToggle.textContent = isOpen ? "×" : "☰";
+<canvas id="particles" aria-hidden="true"></canvas><div id="cursor-glow" aria-hidden="true"></div><div class="noise" aria-hidden="true"></div>
+<header class="navbar" id="navbar"><div class="container nav-inner">
+<a class="brand" href="#home" aria-label="LOCOPANI home"><span class="brand-mark">L</span><span>LOCOPANI</span></a>
+<button class="menu-toggle" id="menuToggle" aria-label="Abrir navegação" aria-expanded="false">☰</button>
+<nav class="nav-links" id="navLinks" aria-label="Navegação principal">
+<a href="#home">Home</a><a href="#features">Recursos</a><a href="#showcase">Experiência</a><a href="#plans">Planos</a><a href="#updates">Updates</a>
+<a class="nav-cta" href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">Get Key ↗</a>
+</nav></div></header>
+<main>
+<section class="hero" id="home"><div class="container hero-grid">
+<div class="reveal"><div class="eyebrow"><span class="live-dot"></span> THE LOCOPANI EXPERIENCE</div>
+<h1>GO BEYOND<br><span class="gradient-text">ORDINARY.</span></h1>
+<p class="hero-copy">Descubra um novo nível de personalização. Explore a experiência LOCOPANI, personalize seu setup e deixe tudo com a sua identidade.</p>
+<div class="hero-actions"><a class="button" href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">GET STARTED ↗</a><a class="button secondary" href="#plans">VER PLANOS ↓</a></div>
+<p class="hero-note">BUILT FOR PERSONALIZATION. DESIGNED TO STAND OUT.</p></div>
+<div class="visual-stage reveal" aria-label="Visual LOCOPANI"><div class="orb"></div><div class="orbit"></div><div class="core-card">
+<div class="card-top"><span class="card-label">LOCOPANI / EXPERIENCE</span><span class="status">PURPLE EDITION</span></div>
+<div class="core-logo"><span>LO.</span></div><div class="card-divider"></div><div class="card-bottom"><div><strong>YOUR STYLE. YOUR SETUP.</strong><small>Uma experiência diferente.</small></div><span class="mini-icon">✳</span></div>
+</div></div></div></section>
+<section id="features"><div class="container"><div class="section-head reveal"><span class="section-tag">01 / O que esperar</span><h2>Feito para o <span class="gradient-text">seu estilo.</span></h2><p class="section-desc">Personalização visual, controles organizados e uma identidade própria em cada detalhe.</p></div>
+<div class="features-grid">
+<article class="feature reveal"><div class="feature-icon">✳</div><h3>Visual Customization</h3><p>Explore opções visuais e personalize a aparência da sua experiência.</p></article>
+<article class="feature reveal"><div class="feature-icon">◈</div><h3>Interface & Controls</h3><p>Uma interface organizada, com opções acessíveis e controles personalizáveis.</p></article>
+<article class="feature reveal"><div class="feature-icon">✧</div><h3>Personal Touch</h3><p>Deixe a experiência com a sua cara através das opções de personalização.</p></article>
+<article class="feature reveal"><div class="feature-icon">⌘</div><h3>Configuration</h3><p>Mantenha seu setup organizado com os recursos de configuração disponíveis.</p></article>
+<article class="feature reveal"><div class="feature-icon">↗</div><h3>Regular Improvements</h3><p>Acompanhe novidades e melhorias conforme o projeto evolui.</p></article>
+<article class="feature reveal"><div class="feature-icon">◇</div><h3>LOCOPANI Identity</h3><p>Uma atmosfera escura, roxo neon e brilho com personalidade própria.</p></article>
+</div></div></section>
+<section id="showcase"><div class="container showcase">
+<div class="showcase-panel reveal" aria-label="Prévia ilustrativa da interface"><div class="panel-bar"><i></i><i></i><i></i><span class="panel-title">LOCOPANI / PREVIEW</span></div>
+<div class="setting-row"><div><div class="setting-label">Visual options</div><div class="setting-sub">Personalize sua experiência</div></div><span class="toggle"></span></div>
+<div class="setting-row"><div><div class="setting-label">Interface settings</div><div class="setting-sub">Do seu jeito</div></div><span class="toggle"></span></div>
+<div class="setting-row"><div><div class="setting-label">Custom appearance</div><div class="setting-sub">Seu estilo, sua escolha</div></div><span class="toggle"></span></div>
+<div class="setting-row"><div><div class="setting-label">Purple atmosphere</div><div class="setting-sub">A estética LOCOPANI</div></div><span class="toggle"></span></div></div>
+<div class="reveal"><span class="section-tag">02 / A experiência</span><h2>Mais que um nome.<br><span class="gradient-text">Uma assinatura.</span></h2><p class="section-desc">O LOCOPANI leva uma identidade visual própria a cada detalhe. Esta prévia ilustra a direção visual do site e não é um painel de controle ao vivo do script.</p><div style="margin-top:25px"><a class="button secondary" href="#updates">CONHEÇA O PROJETO ↗</a></div></div>
+</div></section>
+<section class="pricing-section" id="plans"><div class="container">
+<div class="section-head reveal"><span class="section-tag">03 / Planos de acesso</span><h2>Escolha seu <span class="gradient-text">plano.</span></h2><p class="section-desc">Cards verticais com brilho interativo, partículas e acesso rápido ao plano escolhido.</p></div>
+<div class="plans">
+<article class="plan reveal"><div class="plan-icon">⌁</div><h3>1 DAY</h3><div class="price">Grátis*</div><div class="duration">1 dia de acesso</div><p>Gere sua key individual através do fluxo oficial Linkvertise.</p><a class="button" href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">Pegar key ↗</a></article>
+<article class="plan reveal"><div class="plan-icon">✦</div><h3>7 DAYS</h3><div class="price">R$ 5,45</div><div class="duration">7 dias de acesso</div><p>Acesso temporário ao LOCOPANI por uma semana.</p><a class="button" href="https://discord.gg/2wWmHtvg8a" target="_blank" rel="noopener noreferrer">Comprar ↗</a></article>
+<article class="plan featured reveal"><div class="plan-icon">✧</div><h3>30 DAYS</h3><div class="price">R$ 12,45</div><div class="duration">30 dias de acesso</div><p>Mais tempo para aproveitar sua experiência LOCOPANI.</p><a class="button" href="https://discord.gg/2wWmHtvg8a" target="_blank" rel="noopener noreferrer">Comprar ↗</a></article>
+<article class="plan reveal"><div class="plan-icon">♛</div><h3>LIFETIME</h3><div class="price">R$ 17,45</div><div class="duration">Acesso permanente</div><p>Plano permanente conforme as regras do sistema.</p><a class="button" href="https://discord.gg/2wWmHtvg8a" target="_blank" rel="noopener noreferrer">Comprar ↗</a></article>
+</div>
+<div class="cta-box reveal" style="margin-top:22px"><span class="section-tag">PRECISA DE UMA KEY PAGA?</span><h2>Compre pelo <span class="gradient-text">Discord!</span></h2><p>Entre no servidor oficial para combinar o pagamento e receber sua key.</p><a class="button" href="https://discord.gg/2wWmHtvg8a" target="_blank" rel="noopener noreferrer">COMPRE PELO DISCORD ↗</a></div>
+</div></section>
+<section id="updates"><div class="container"><div class="section-head reveal"><span class="section-tag">04 / Novidades do projeto</span><h2>Sempre <span class="gradient-text">evoluindo.</span></h2><p class="section-desc">Acompanhe os anúncios e futuras notas de atualização.</p></div>
+<article class="updates-card reveal"><div class="update-top"><span class="version">PROJECT NEWS</span><span class="update-label">LOCOPANI / OFFICIAL</span></div><h3>Uma nova casa para o LOCOPANI.</h3><p>Este site reúne informações do projeto, destaques de recursos e anúncios futuros. As notas de versão serão adicionadas quando estiverem confirmadas.</p><div class="update-foot">BEM-VINDO AO SITE LOCOPANI.</div></article>
+</div></section>
+<section id="get-key"><div class="container"><div class="cta-box reveal"><span class="section-tag">PRONTO PARA COMEÇAR?</span><h2>Seu próximo passo começa <span class="gradient-text">aqui.</span></h2><p>Continue para o sistema de keys existente para gerar sua key individual.</p><a class="button" href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">GET YOUR KEY ↗</a></div></div></section>
+</main>
+<footer><div class="container footer-inner"><a class="brand" href="#home"><span class="brand-mark">L</span><span>LOCOPANI</span></a><p class="footer-copy">© <span id="year"></span> LOCOPANI. Todos os direitos reservados.</p><div class="footer-links"><a href="#home">Home</a><a href="#features">Recursos</a><a href="https://locopanison-crypto.github.io/LOCOPANI-KeySystem/">Get Key</a></div></div></footer>
+<script>
+(() => {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const canvas = document.getElementById("particles"), ctx = canvas.getContext("2d");
+  const cursorGlow = document.getElementById("cursor-glow");
+  if (cursorGlow && window.matchMedia("(hover:hover) and (pointer:fine)").matches) {
+    let glowTick = false;
+    window.addEventListener("pointermove", e => {
+      if (glowTick) return;
+      glowTick = true;
+      requestAnimationFrame(() => {
+        cursorGlow.style.setProperty("--cursor-x", e.clientX + "px");
+        cursorGlow.style.setProperty("--cursor-y", e.clientY + "px");
+        glowTick = false;
       });
-
-      navLinks.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-          navLinks.classList.remove("open");
-          menuToggle.setAttribute("aria-expanded", "false");
-          menuToggle.setAttribute("aria-label", "Open navigation");
-          menuToggle.textContent = "☰";
-        });
-      });
-
-      const revealItems = document.querySelectorAll(".reveal");
-
-      if ("IntersectionObserver" in window) {
-        const observer = new IntersectionObserver((entries, obs) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-              obs.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.12 });
-
-        revealItems.forEach(item => observer.observe(item));
-      } else {
-        revealItems.forEach(item => item.classList.add("visible"));
-      }
-    })();
-  </script>
+    }, {passive:true});
+  }
+  let w=0,h=0,particles=[],raf=0;
+  function resize(){
+    const dpr=Math.min(window.devicePixelRatio||1,1.5);w=window.innerWidth;h=window.innerHeight;
+    canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);canvas.style.width=w+"px";canvas.style.height=h+"px";ctx.setTransform(dpr,0,0,dpr,0,0);
+    const n=reduced?0:(w<600?24:50);
+    particles=Array.from({length:n},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.8+.45,vx:(Math.random()-.5)*.28,vy:-(Math.random()*.42+.08),a:Math.random()*.55+.18,phase:Math.random()*6.28}));
+  }
+  function draw(){ctx.clearRect(0,0,w,h);for(const p of particles){p.x+=p.vx+Math.sin(p.phase+=.008)*.12;p.y+=p.vy;if(p.y<-8){p.y=h+8;p.x=Math.random()*w}if(p.x<-8)p.x=w+8;if(p.x>w+8)p.x=-8;ctx.beginPath();ctx.fillStyle=`rgba(196,132,252,${p.a})`;ctx.shadowBlur=12;ctx.shadowColor="#a855f7";ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;if(!reduced)raf=requestAnimationFrame(draw)}
+  resize();if(!reduced)draw();window.addEventListener("resize",()=>{cancelAnimationFrame(raf);resize();if(!reduced)draw()},{passive:true});
+  const navbar=document.getElementById("navbar"),menuToggle=document.getElementById("menuToggle"),navLinks=document.getElementById("navLinks");
+  document.getElementById("year").textContent=new Date().getFullYear();
+  const updateNavbar=()=>navbar.classList.toggle("scrolled",window.scrollY>20);updateNavbar();window.addEventListener("scroll",updateNavbar,{passive:true});
+  menuToggle.addEventListener("click",()=>{const open=navLinks.classList.toggle("open");menuToggle.setAttribute("aria-expanded",String(open));menuToggle.setAttribute("aria-label",open?"Fechar navegação":"Abrir navegação");menuToggle.textContent=open?"×":"☰"});
+  navLinks.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{navLinks.classList.remove("open");menuToggle.setAttribute("aria-expanded","false");menuToggle.textContent="☰"}));
+  const revealItems=document.querySelectorAll(".reveal");
+  if(!reduced&&"IntersectionObserver"in window){const observer=new IntersectionObserver((entries,obs)=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("visible");obs.unobserve(entry.target)}}),{threshold:.1});revealItems.forEach(el=>observer.observe(el))}
+  else revealItems.forEach(el=>el.classList.add("visible"));
+  document.querySelectorAll(".plan").forEach(card=>card.addEventListener("pointermove",e=>{const r=card.getBoundingClientRect();card.style.setProperty("--mx",`${e.clientX-r.left}px`);card.style.setProperty("--my",`${e.clientY-r.top}px`)},{passive:true}));
+})();
+</script>
 </body>
 </html>
